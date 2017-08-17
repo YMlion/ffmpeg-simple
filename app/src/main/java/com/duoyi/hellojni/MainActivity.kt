@@ -28,7 +28,11 @@ class MainActivity : BaseActivity() {
             var folderUrl: String = Environment.getExternalStorageDirectory().path
             var inputUrl: String = folderUrl + "/" + "thz20s.mp3"
 //            var inputUrl: String = folderUrl + "/" + "video10s.mp4"
-            playA(inputUrl)
+            var thread = Thread({
+                playA(inputUrl)
+            })
+
+            thread.start()
         }
 
         play_btn.setOnClickListener {
