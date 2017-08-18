@@ -21,52 +21,52 @@ add_library( # Sets the name of the library.
              # Provides a relative path to your source file(s).
              src/main/cpp/native-lib.cpp )
 
-add_library( avcodec
+add_library( avcodec-57
              SHARED
              IMPORTED )
 
-set_target_properties( avcodec
+set_target_properties( avcodec-57
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../src/main/jniLibs/armeabi-v7a/libavcodec.so )
+                       ../../../../src/main/jniLibs/armeabi-v7a/libavcodec-57.so )
 
-add_library( avfilter
+add_library( avfilter-6
              SHARED
              IMPORTED )
 
-set_target_properties( avfilter
+set_target_properties( avfilter-6
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../src/main/jniLibs/armeabi-v7a/libavfilter.so )
+                       ../../../../src/main/jniLibs/armeabi-v7a/libavfilter-6.so )
 
-add_library( avformat
+add_library( avformat-57
              SHARED
              IMPORTED )
 
-set_target_properties( avformat
+set_target_properties( avformat-57
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../src/main/jniLibs/armeabi-v7a/libavformat.so )
-add_library( avutil
+                       ../../../../src/main/jniLibs/armeabi-v7a/libavformat-57.so )
+add_library( avutil-55
              SHARED
              IMPORTED )
 
-set_target_properties( avutil
+set_target_properties( avutil-55
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../src/main/jniLibs/armeabi-v7a/libavutil.so )
+                       ../../../../src/main/jniLibs/armeabi-v7a/libavutil-55.so )
 
-add_library( swresample
+add_library( swresample-2
              SHARED
              IMPORTED )
 
-set_target_properties( swresample
+set_target_properties( swresample-2
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../src/main/jniLibs/armeabi-v7a/libswresample.so )
+                       ../../../../src/main/jniLibs/armeabi-v7a/libswresample-2.so )
 
-add_library( swscale
+add_library( swscale-4
              SHARED
              IMPORTED )
 
-set_target_properties( swscale
+set_target_properties( swscale-4
                        PROPERTIES IMPORTED_LOCATION
-                       ../../../../src/main/jniLibs/armeabi-v7a/libswscale.so )
+                       ../../../../src/main/jniLibs/armeabi-v7a/libswscale-4.so )
 
 include_directories(src/main/jniLibs/include/)
 
@@ -95,12 +95,12 @@ target_link_libraries( # Specifies the target library.
                        native-lib
                        -landroid
                        OpenSLES
-                       avcodec
-                       avfilter
-                       avformat
-                       avutil
-                       swresample
-                       swscale
+                       avcodec-57
+                       avfilter-6
+                       avformat-57
+                       avutil-55
+                       swresample-2
+                       swscale-4
                        # Links the target library to the log library
                        # included in the NDK.
                        ${log-lib} )

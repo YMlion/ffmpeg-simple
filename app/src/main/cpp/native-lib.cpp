@@ -175,7 +175,6 @@ static SLMuteSoloItf bqPlayerMuteSolo;
 static SLVolumeItf bqPlayerVolume;
 static SLmilliHertz bqPlayerSampleRate = 0;
 static jint bqPlayerBufSize = 0;
-static short *resampleBuf = NULL;
 static pthread_mutex_t audioEngineLock = PTHREAD_MUTEX_INITIALIZER;
 // aux effect on the output mix, used by the buffer queue player
 static const SLEnvironmentalReverbSettings reverbSettings =
@@ -193,8 +192,9 @@ uint8_t *outputBuffer;
 
 int
 getPCM() {
+    int got;
     while (av_read_frame(pFormatCtx, packet) >= 0) {
-        if (packet->stream_index == audioindex) {
+        /*if (packet->stream_index == audioindex) {
             int ret = avcodec_send_packet(pCodecCtx, packet);
             if (ret < 0 && ret != AVERROR(EAGAIN) && ret != AVERROR_EOF)
                 break;
@@ -210,7 +210,7 @@ getPCM() {
                 } else {
 //                    av_samples_get_buffer_size(&nextSize, pCodecCtx->channels,
 //                                               pCodecCtx->frame_size, pCodecCtx->sample_fmt, 1);
-                    nextSize = av_samples_get_buffer_size(pFrame->linesize, pCodecCtx->channels,
+                    av_samples_get_buffer_size(&nextSize, pCodecCtx->channels,
                                                           pFrame->nb_samples, pCodecCtx->sample_fmt,
                                                           1);
                 }
@@ -218,7 +218,30 @@ getPCM() {
                 swr_convert(swr, &outputBuffer, nextSize,
                             (uint8_t const **) (pFrame->extended_data),
                             pFrame->nb_samples);
+                nextBuffer = outputBuffer;
             }
+            return 0;
+        }*/
+
+        if (packet->stream_index == audioindex) {
+//            int ret = avcodec_send_packet(pCodecCtx, packet);
+            int ret = avcodec_decode_audio4(pCodecCtx, pFrame, &got, packet);
+            if (ret < 0 && ret != AVERROR(EAGAIN) && ret != AVERROR_EOF)
+                return -1;
+
+//            ret = avcodec_receive_frame(pCodecCtx, pFrame);
+//            if (ret < 0 && ret != AVERROR_EOF)
+//                return -1;
+            //处理不同的格式000
+            if (pCodecCtx->sample_fmt == AV_SAMPLE_FMT_S16P) {
+                nextSize = av_samples_get_buffer_size(pFrame->linesize, pCodecCtx->channels,pFrame->nb_samples,pCodecCtx->sample_fmt, 1);
+            }else {
+                av_samples_get_buffer_size(&nextSize, pCodecCtx->channels,pCodecCtx->frame_size,pCodecCtx->sample_fmt, 1);
+            }
+            // 音频格式转换
+            swr_convert(swr, &outputBuffer, nextSize,
+                        (uint8_t const **) (pFrame->extended_data),
+                        pFrame->nb_samples);
             nextBuffer = outputBuffer;
             return 0;
         }

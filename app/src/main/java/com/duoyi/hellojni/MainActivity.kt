@@ -11,6 +11,7 @@ import android.view.*
 import android.view.TextureView.SurfaceTextureListener
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import java.io.File
 
 class MainActivity : BaseActivity() {
 
@@ -27,9 +28,13 @@ class MainActivity : BaseActivity() {
                     .setAction("Action", null).show()
             var folderUrl: String = Environment.getExternalStorageDirectory().path
             var inputUrl: String = folderUrl + "/" + "thz20s.mp3"
+            var file = File(inputUrl)
+            if (!file.exists()) {
+                return@setOnClickListener
+            }
 //            var inputUrl: String = folderUrl + "/" + "video10s.mp4"
             var thread = Thread({
-                playA(inputUrl)
+                playAudio(inputUrl)
             })
 
             thread.start()
@@ -91,9 +96,10 @@ class MainActivity : BaseActivity() {
                     play(inputUrl, surface!!)
                 })
 
-                thread.start()
+//                thread.start()
             }
         }
+        prepareAudio()
     }
 
     override fun onStop() {
@@ -114,7 +120,7 @@ class MainActivity : BaseActivity() {
         thread.start()
     }
 
-    private fun playA(path: String) {
+    private fun prepareAudio() {
         createEngine()
         var sampleRate = 0
         var bufSize = 0
@@ -130,7 +136,6 @@ class MainActivity : BaseActivity() {
         nativeParam = am.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER)
         bufSize = Integer.parseInt(nativeParam)
         createBufferQueueAudioPlayer(sampleRate, bufSize)
-        playAudio(path)
     }
 
     /**
@@ -149,12 +154,20 @@ class MainActivity : BaseActivity() {
         // Used to load the 'native-lib' library on application startup.
         init {
             System.loadLibrary("native-lib")
+            System.loadLibrary("avcodec-57")
+            System.loadLibrary("avfilter-6")
+            System.loadLibrary("avformat-57")
+            System.loadLibrary("avutil-55")
+            System.loadLibrary("swresample-2")
+            System.loadLibrary("swscale-4")
+/*
             System.loadLibrary("avcodec")
             System.loadLibrary("avfilter")
             System.loadLibrary("avformat")
             System.loadLibrary("avutil")
             System.loadLibrary("swresample")
             System.loadLibrary("swscale")
+*/
         }
     }
 }
